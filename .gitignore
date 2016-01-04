@@ -46,3 +46,7 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+lang.egg-info/dependency_links.txt
+lang.egg-info/PKG-INFO
+lang.egg-info/SOURCES.txt
+lang.egg-info/top_level.txt
