@@ -1,6 +1,6 @@
 import pytest
 from lang.function.access_modifiers import EnforceProtected, EnforceProtectedMeta, EnforcePrivate, \
-    EnforcePrivateMeta, enforce_protected, enforce_private
+    EnforcePrivateMeta, enforce_protected, enforce_private, private_property, protected_property
 
 
 @pytest.fixture
@@ -61,5 +61,23 @@ def private_decorate():
     class Sample(object):
         def __init__(self):
             self._var_ = 5
+
+    return Sample()
+
+@pytest.fixture
+def private_property_sample():
+    class Sample(object):
+        @private_property
+        def var(self):
+            return 5
+
+    return Sample()
+
+@pytest.fixture
+def protected_property_sample():
+    class Sample(object):
+        @protected_property
+        def var(self):
+            return 5
 
     return Sample()
