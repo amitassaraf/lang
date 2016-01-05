@@ -1,9 +1,7 @@
 import inspect
 
-from src.lang import PrivateMemberAccessException, ProtectedMemberAccessException
+from lang.exceptions import PrivateMemberAccessException, ProtectedMemberAccessException
 
-
-#TODO: Add decorators for private & protected
 
 def _private_member_access_protection(function, orig_class, self, item, *args, **kwargs):
     """
@@ -41,7 +39,10 @@ def _protected_member_access_protection(function, self, item, *args, **kwargs):
         args_info = inspect.getargvalues(f)
         if args_info.args:
             caller_self = args_info.locals[args_info.args[0]]
-            if isinstance(caller_self, type(self)):  # Allow anyone with the same class or below to change us!
+            function_name = inspect.getframeinfo(f).function
+
+            # Allow anyone with the same class or below to access us!
+            if function_name in dir(self) and isinstance(caller_self, type(self)):
                 return function(self, item, *args, **kwargs)
         raise ProtectedMemberAccessException()
     return function(self, item, *args, **kwargs)
@@ -132,3 +133,39 @@ class EnforceProtected(object):
                 lambda *args, **kwargs: _protected_member_access_protection(object.__setattr__, *args,
                                                                             **kwargs))
         return super(EnforceProtected, typ).__new__(typ, *args, **kwargs)
+
+
+# Decorators
+
+def enforce_protected(cls):
+    """
+    Decorator for a class for enforcing protected variables @see lang.access_modifiers.EnforceProtectedMeta
+    :param cls: The class to wrap
+    :return: AccessWrapper class
+    """
+
+    class AccessWrapper(cls, EnforceProtected):
+        __doc__ = cls.__doc__
+
+        def __init__(self, *args, **kwargs):
+            cls.__init__(self, *args, **kwargs)
+            EnforceProtected.__init__(self)
+
+    return AccessWrapper
+
+
+def enforce_private(cls):
+    """
+    Decorator for a class for enforcing private variables @see lang.access_modifiers.EnforcePrivateMeta
+    :param cls: The class to wrap
+    :return: AccessWrapper class
+    """
+
+    class AccessWrapper(cls, EnforcePrivate):
+        __doc__ = cls.__doc__
+
+        def __init__(self, *args, **kwargs):
+            cls.__init__(self, *args, **kwargs)
+            EnforcePrivate.__init__(self)
+
+    return AccessWrapper

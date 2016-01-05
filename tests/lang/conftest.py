@@ -1,38 +1,59 @@
 import pytest
 from lang.function.access_modifiers import EnforceProtected, EnforceProtectedMeta, EnforcePrivate, \
-    EnforcePrivateMeta
+    EnforcePrivateMeta, enforce_protected, enforce_private
 
 
 @pytest.fixture
 def protected_class():
     class Sample(EnforceProtected):
-        _var = 5
+        def __init__(self):
+            self._var = 5
 
-    return Sample
+    return Sample()
 
 
 @pytest.fixture
 def protected_meta():
     class Sample(object):
         __metaclass__ = EnforceProtectedMeta
-        _var = 5
+        def __init__(self):
+            self._var = 5
 
-    return Sample
+    return Sample()
 
+@pytest.fixture
+def protected_decorate():
+    @enforce_protected
+    class Sample(object):
+        def __init__(self):
+            self._var = 5
+
+    return Sample()
 
 @pytest.fixture
 def private_class():
     class Sample(EnforcePrivate):
-        _var_ = 5
+        def __init__(self):
+            self._var_ = 5
         pass
 
-    return Sample
+    return Sample()
 
 
 @pytest.fixture
 def private_meta():
     class Sample(object):
         __metaclass__ = EnforcePrivateMeta
-        _var_ = 5
+        def __init__(self):
+            self._var_ = 5
 
-    return Sample
+    return Sample()
+
+@pytest.fixture
+def private_decorate():
+    @enforce_private
+    class Sample(object):
+        def __init__(self):
+            self._var_ = 5
+
+    return Sample()
