@@ -1,4 +1,5 @@
 import inspect
+import types
 
 from lang.exceptions import PrivateMemberAccessException, ProtectedMemberAccessException
 
@@ -143,6 +144,7 @@ def enforce_protected(cls):
     :param cls: The class to wrap
     :return: AccessWrapper class
     """
+    assert isinstance(cls, (type, types.ClassType))
 
     class AccessWrapper(cls, EnforceProtected):
         __doc__ = cls.__doc__
@@ -160,6 +162,7 @@ def enforce_private(cls):
     :param cls: The class to wrap
     :return: AccessWrapper class
     """
+    assert isinstance(cls, (type, types.ClassType))
 
     class AccessWrapper(cls, EnforcePrivate):
         __doc__ = cls.__doc__
