@@ -86,8 +86,11 @@ class protected_property(property):
     """
 
     def __init__(self, fget=None, fset=None, fdel=None, doc=None):
-        new_fset = partial(_protected_property_access_protection, fset)
-        new_fget = partial(_protected_property_access_protection, fget)
+        new_fset, new_fget = None, None
+        if fset:
+            new_fset = partial(_protected_property_access_protection, fset)
+        if fget:
+            new_fget = partial(_protected_property_access_protection, fget)
         super(protected_property, self).__init__(new_fget, new_fset, fdel, doc)
 
 
@@ -99,8 +102,11 @@ class private_property(property):
     """
 
     def __init__(self, fget=None, fset=None, fdel=None, doc=None):
-        new_fset = partial(_private_property_access_protection, fset)
-        new_fget = partial(_private_property_access_protection, fget)
+        new_fset, new_fget = None, None
+        if fset:
+            new_fset = partial(_private_property_access_protection, fset)
+        if fget:
+            new_fget = partial(_private_property_access_protection, fget)
         super(private_property, self).__init__(new_fget, new_fset, fdel, doc)
 
 
