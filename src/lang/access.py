@@ -4,6 +4,7 @@ import types
 
 from lang.exceptions import PrivateMemberAccessException, ProtectedMemberAccessException
 
+# Logic functions
 
 def _private_member_access_protection(function, orig_class, self, item, *args, **kwargs):
     """
@@ -77,6 +78,7 @@ def _private_property_access_protection(function, self, *args, **kwargs):
                     return function(self, *args, **kwargs)
     raise PrivateMemberAccessException()
 
+# Protected Property
 
 class protected_property(property):
     """
@@ -91,6 +93,23 @@ class protected_property(property):
         super(protected_property, self).__init__(new_fget, new_fset, fdel, doc)
 
 
+############
+## Properties for protecting only specific property type (Getter or Setter)
+############
+
+class protected_setter_only(property):
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        new_fset = partial(_protected_property_access_protection, fset)
+        super(protected_setter_only, self).__init__(fget, new_fset, fdel, doc)
+
+
+class protected_getter_only(property):
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        new_fget = partial(_protected_property_access_protection, fget)
+        super(protected_getter_only, self).__init__(new_fget, fset, fdel, doc)
+
+# Private Property
+
 class private_property(property):
     """
     property that is used to enforce protected properties regardless of convention.
@@ -103,6 +122,23 @@ class private_property(property):
         new_fget = partial(_private_property_access_protection, fget)
         super(private_property, self).__init__(new_fget, new_fset, fdel, doc)
 
+
+############
+## Properties for protecting only specific property type (Getter or Setter)
+############
+
+class private_setter_only(property):
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        new_fset = partial(_private_property_access_protection, fset)
+        super(private_setter_only, self).__init__(fget, new_fset, fdel, doc)
+
+
+class private_getter_only(property):
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        new_fget = partial(_private_property_access_protection, fget)
+        super(private_getter_only, self).__init__(new_fget, fset, fdel, doc)
+
+# Enforcers
 
 class EnforcePrivateMeta(type):
     """
