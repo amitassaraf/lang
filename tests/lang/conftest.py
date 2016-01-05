@@ -1,5 +1,6 @@
 import pytest
-from lang.function.access_modifiers import EnforceProtected, EnforceProtectedMeta, EnforcePrivate, \
+
+from lang.access_modifiers import EnforceProtected, EnforceProtectedMeta, EnforcePrivate, \
     EnforcePrivateMeta, enforce_protected, enforce_private, private_property, protected_property
 
 
