@@ -1,3 +1,4 @@
+from functools import partial
 import inspect
 import types
 
@@ -11,12 +12,12 @@ def _private_member_access_protection(function, orig_class, self, item, *args, *
     :param item: The item that we want to get
     :param args: Extra arguments
     :param kwargs: Extra keyword arguments
-    :return:
+    :return: The attribute
     """
     if not item.startswith('__') and item.startswith('_') and item.endswith('_'):
-        f = inspect.currentframe().f_back.f_back  # Twice because we skip lambda
-        caller_func_name = inspect.getframeinfo(f).function
-        code_context = inspect.getsourcelines(f)
+        frame = inspect.currentframe().f_back.f_back  # Twice because we skip lambda
+        caller_func_name = inspect.getframeinfo(frame).function
+        code_context = inspect.getsourcelines(frame)
         if caller_func_name in orig_class.__dict__:
             original_code_context = inspect.getsourcelines(orig_class.__dict__[caller_func_name])
 
@@ -33,20 +34,74 @@ def _protected_member_access_protection(function, self, item, *args, **kwargs):
     :param item: The item that we want to get
     :param args: Extra arguments
     :param kwargs: Extra keyword arguments
-    :return:
+    :return: The attribute
     """
     if not item.startswith('__') and item.startswith('_') and not item.endswith('_'):
-        f = inspect.currentframe().f_back.f_back  # Twice because we skip lambda
-        args_info = inspect.getargvalues(f)
+        frame = inspect.currentframe().f_back.f_back  # Twice because we skip lambda
+        args_info = inspect.getargvalues(frame)
         if args_info.args:
             caller_self = args_info.locals[args_info.args[0]]
-            function_name = inspect.getframeinfo(f).function
+            function_name = inspect.getframeinfo(frame).function
 
             # Allow anyone with the same class or below to access us!
             if function_name in dir(self) and isinstance(caller_self, type(self)):
                 return function(self, item, *args, **kwargs)
         raise ProtectedMemberAccessException()
     return function(self, item, *args, **kwargs)
+
+
+def _protected_property_access_protection(function, self, *args, **kwargs):
+    frame = inspect.currentframe().f_back
+    args_info = inspect.getargvalues(frame)
+    if args_info.args:
+        caller_self = args_info.locals[args_info.args[0]]
+        function_name = inspect.getframeinfo(frame).function
+
+        # Allow anyone with the same class or below to access us!
+        if function_name in dir(self) and isinstance(caller_self, type(self)):
+            return function(self, *args, **kwargs)
+    raise ProtectedMemberAccessException()
+
+
+def _private_property_access_protection(function, self, *args, **kwargs):
+    frame = inspect.currentframe().f_back
+    args_info = inspect.getargvalues(frame)
+    if args_info.args:
+        caller_self = args_info.locals[args_info.args[0]]
+        for item in caller_self.__class__.__mro__:
+            if item.__name__ in frame.f_globals and function.func_name in item.__dict__:
+                func_name = inspect.getframeinfo(frame).function
+                if caller_self.__class__ == item or (
+                                func_name in item.__dict__ and inspect.getsourcelines(frame) == inspect.getsourcelines(
+                            item.__dict__[func_name])):
+                    return function(self, *args, **kwargs)
+    raise PrivateMemberAccessException()
+
+
+class protected_property(property):
+    """
+    property that is used to enforce protected properties regardless of convention.
+    The wrapped property will now be protected and if tried to be accessed from a class that is not it's
+    defining class or a subclass of it, a ProtectedMemberAccessException will be raised.
+    """
+
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        new_fset = partial(_protected_property_access_protection, fset)
+        new_fget = partial(_protected_property_access_protection, fget)
+        super(protected_property, self).__init__(new_fget, new_fset, fdel, doc)
+
+
+class private_property(property):
+    """
+    property that is used to enforce protected properties regardless of convention.
+    The wrapped property will now be protected and if tried to be accessed from a class that is not it's
+    defining class, a PrivateMemberAccessException will be raised.
+    """
+
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        new_fset = partial(_private_property_access_protection, fset)
+        new_fget = partial(_private_property_access_protection, fget)
+        super(private_property, self).__init__(new_fget, new_fset, fdel, doc)
 
 
 class EnforcePrivateMeta(type):
