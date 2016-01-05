@@ -16,10 +16,12 @@ def protected_class():
 def protected_meta():
     class Sample(object):
         __metaclass__ = EnforceProtectedMeta
+
         def __init__(self):
             self._var = 5
 
     return Sample()
+
 
 @pytest.fixture
 def protected_decorate():
@@ -30,11 +32,13 @@ def protected_decorate():
 
     return Sample()
 
+
 @pytest.fixture
 def private_class():
     class Sample(EnforcePrivate):
         def __init__(self):
             self._var_ = 5
+
         pass
 
     return Sample()
@@ -44,10 +48,12 @@ def private_class():
 def private_meta():
     class Sample(object):
         __metaclass__ = EnforcePrivateMeta
+
         def __init__(self):
             self._var_ = 5
 
     return Sample()
+
 
 @pytest.fixture
 def private_decorate():
