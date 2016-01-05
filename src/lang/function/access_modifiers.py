@@ -1,24 +1,9 @@
 import inspect
-from lang.exceptions import PrivateMemberAccessException, ProtectedMemberAccessException
+
+from src.lang import PrivateMemberAccessException, ProtectedMemberAccessException
 
 
-def _get_name(frame):
-    """
-    Method to get the name and function of the frame
-    :param frame: The frame to get
-    :return: The name of the function and class of the frame
-    """
-    code = frame.f_code
-    name = code.co_name
-    for objname, obj in frame.f_globals.iteritems():
-        try:
-            assert obj.__dict__[name].func_code is code
-        except Exception:
-            pass
-        else:  # obj is the class that defines our method
-            return '{0}.{1}'.format(objname, name)
-    return name
-
+#TODO: Add decorators for private & protected
 
 def _private_member_access_protection(function, orig_class, self, item, *args, **kwargs):
     """
@@ -31,16 +16,12 @@ def _private_member_access_protection(function, orig_class, self, item, *args, *
     """
     if not item.startswith('__') and item.startswith('_') and item.endswith('_'):
         f = inspect.currentframe().f_back.f_back  # Twice because we skip lambda
-        args_info = inspect.getargvalues(f)
-        if args_info.args:
-            caller_self = args_info.locals[args_info.args[0]]
-            caller_class = type(caller_self)
+        caller_func_name = inspect.getframeinfo(f).function
+        code_context = inspect.getsourcelines(f)
+        if caller_func_name in orig_class.__dict__:
+            original_code_context = inspect.getsourcelines(orig_class.__dict__[caller_func_name])
 
-            # Only allow OUR SPECIFIC CLASS to access our private variables
-            if hasattr(caller_class, _get_name(f).split('.')[1]):
-                if _get_name(f).split('.')[0] in map(lambda x: x.__name__, caller_class.__mro__[1:]):
-                    return function(self, item, *args, **kwargs)
-            if repr(type(caller_self)) == repr(orig_class):
+            if code_context == original_code_context:
                 return function(self, item, *args, **kwargs)
         raise PrivateMemberAccessException()
     return function(self, item, *args, **kwargs)
@@ -151,8 +132,3 @@ class EnforceProtected(object):
                 lambda *args, **kwargs: _protected_member_access_protection(object.__setattr__, *args,
                                                                             **kwargs))
         return super(EnforceProtected, typ).__new__(typ, *args, **kwargs)
-
-
-class Box(EnforceProtected):
-    def __init__(self):
-        self._lel = 5
