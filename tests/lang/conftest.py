@@ -64,6 +64,7 @@ def private_decorate():
 
     return Sample()
 
+
 @pytest.fixture
 def private_property_sample():
     class Sample(object):
@@ -72,6 +73,7 @@ def private_property_sample():
             return 5
 
     return Sample()
+
 
 @pytest.fixture
 def protected_property_sample():
