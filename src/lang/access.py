@@ -1,8 +1,16 @@
+"""
+
+Author: Amit Assaraf
+TODOs: Add protect/private decorator for functions
+
+"""
+
 from functools import partial
 import inspect
 import types
 
 from lang.exceptions import PrivateMemberAccessException, ProtectedMemberAccessException
+
 
 # Logic functions
 
@@ -78,6 +86,7 @@ def _private_property_access_protection(function, self, *args, **kwargs):
                     return function(self, *args, **kwargs)
     raise PrivateMemberAccessException()
 
+
 # Protected Property
 
 class protected_property(property):
@@ -108,6 +117,7 @@ class protected_getter_only(property):
         new_fget = partial(_protected_property_access_protection, fget)
         super(protected_getter_only, self).__init__(new_fget, fset, fdel, doc)
 
+
 # Private Property
 
 class private_property(property):
@@ -137,6 +147,7 @@ class private_getter_only(property):
     def __init__(self, fget=None, fset=None, fdel=None, doc=None):
         new_fget = partial(_private_property_access_protection, fget)
         super(private_getter_only, self).__init__(new_fget, fset, fdel, doc)
+
 
 # Enforcers
 

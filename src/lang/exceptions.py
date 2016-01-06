@@ -20,6 +20,14 @@ class LangException(Exception):
 class PrivateMemberAccessException(LangException):
     MESSAGE = 'You cannot access a member of a class, that is a private member.'
 
+
 class ProtectedMemberAccessException(LangException):
     MESSAGE = 'You cannot access a member of a class, that is a protected member not from inside the class.'
 
+
+class BadInterfaceImplementationException(LangException):
+    MESSAGE = 'A class that was declared as an interface, had function implementations.'
+
+
+class VariablesInInterfaceException(LangException):
+    MESSAGE = 'A class that was declared as an interface, had class variables.'
