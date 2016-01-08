@@ -60,6 +60,7 @@ Protected setter/getter only
 		def size(self):
 			...
 **Interface Classes**
+
 An interface is a class that can only implement function signatures and class members.
 
     class IBox(Interface):
@@ -75,6 +76,7 @@ An interface is a class that can only implement function signatures and class me
 If a function is implemented that it's source is not only 'pass' then an exception is thrown.
 
 **Abstract Classes**
+
 This exists already in python  (abc module) so I just wrapped it to be in the same package.
 
     class Box(Abstract): 
@@ -89,6 +91,7 @@ This exists already in python  (abc module) so I just wrapped it to be in the sa
 			...
 
 **Final Classes**
+
 Final classes are classes that cannot be subclassed
 
     class TheBestBox(object):
