@@ -16,7 +16,7 @@ with open(path.join(here, '..', 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='lang',
-    version='1.0.0',
+    version='1.0.3',
     description='Module for enforcing language constraints in Python',
     long_description=long_description,
 
@@ -36,8 +36,6 @@ setup(
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: Apache License',
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python :: 2',
