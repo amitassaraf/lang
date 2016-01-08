@@ -1,7 +1,7 @@
 import inspect
 import types
 import re
-from lang.abstract import Abstract, AbstractMeta, abstract_method, abstract_property
+from lang.abstract import Abstract, EnforceAbstractMeta, abstract_method, abstract_property
 from lang.exceptions import BadInterfaceImplementationException
 
 _INTERFACE_IGNORE_DICT_ITEMS = ['__dict__', '__doc__', '__module__', '__weakref__']
@@ -11,7 +11,7 @@ _STATIC_BUILTIN_IGNORES = ['__new__', '__metaclass__']
 _INTERFACE_ALLOWED_FUNCTION_TYPES = (types.FunctionType, types.MethodType, property)
 
 
-class EnforceInterfaceMeta(AbstractMeta):
+class EnforceInterfaceMeta(EnforceAbstractMeta):
     """
     Metaclass for enforcing an interface implementation.
     """

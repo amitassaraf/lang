@@ -27,3 +27,6 @@ class ProtectedMemberAccessException(LangException):
 
 class BadInterfaceImplementationException(LangException):
     MESSAGE = 'A class that was declared as an interface, had function implementations.'
+
+class FinalClassSubclassedException(LangException):
+    MESSAGE = 'Type is not a final class and cannot be subclassed'

@@ -4,11 +4,11 @@ import abc
 Wrap abc just for a nicer interface and a unified module for lang enforcing.
 """
 
-AbstractMeta = abc.ABCMeta
+EnforceAbstractMeta = abc.ABCMeta
 
 class Abstract(object):
 
-    __metaclass__ = AbstractMeta
+    __metaclass__ = EnforceAbstractMeta
 
     pass
 
