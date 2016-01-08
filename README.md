@@ -116,4 +116,5 @@ Contact Me
 If you have any ideas or suggestions or bugs, please do contact me!
 
 LinkedIn: Amit Assaraf
+
 Email: amit@helpi.me
