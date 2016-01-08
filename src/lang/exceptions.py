@@ -1,20 +1,11 @@
-class ExceptionMessageMeta(type):
-    """
-    Metaclass for initializing the message variable of the Exception class by a class variable
-    named <MESSAGE_MEMBER_NAME>.
-    """
-    MESSAGE_MEMBER_NAME = 'MESSAGE'
-
-    def __init__(cls, what=None, bases=None, dict=None):
-        super(ExceptionMessageMeta, cls).__init__(what, bases, dict)
-        setattr(cls, 'message', getattr(cls, ExceptionMessageMeta.MESSAGE_MEMBER_NAME, None))
-
-
 class LangException(Exception):
     """
     The base class for all language exceptions
     """
-    __metaclass__ = ExceptionMessageMeta
+    MESSAGE_MEMBER_NAME = 'MESSAGE'
+
+    def __str__(self):
+        return getattr(self, LangException.MESSAGE_MEMBER_NAME, None)
 
 
 class PrivateMemberAccessException(LangException):
