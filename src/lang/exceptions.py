@@ -27,7 +27,3 @@ class ProtectedMemberAccessException(LangException):
 
 class BadInterfaceImplementationException(LangException):
     MESSAGE = 'A class that was declared as an interface, had function implementations.'
-
-
-class VariablesInInterfaceException(LangException):
-    MESSAGE = 'A class that was declared as an interface, had class variables.'
