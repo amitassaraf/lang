@@ -1,6 +1,8 @@
 Lang - Python Language Constraints
 =============================
 
+**NOTE: Deprecated and not under maintenance**
+
 Lang is a Python module that allows enforcing programming language constraints. Lang was built using a Java like mindset, so many of the constraints that are supported are mirrors of constraints in the Java programming language.
 
 Features:
